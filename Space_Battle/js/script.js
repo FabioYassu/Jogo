@@ -184,8 +184,12 @@
                     alienNave.x += alienNave.vx;
                 }
             }
-        }
-        
+            //GameOver -  confere se Alien ultrapassou nave Defender
+            if(alienNave.y > cnv.height + alienNave.height - 50){
+            gameState = OVER;   
+            console.log('FIM')        
+            }
+        }     
     }
 
     //Criação misseis em tela
@@ -203,7 +207,7 @@
         //Divide o canvas em 8 colunas para o posicionamento aleatorio do alien
         // 8 = divisão de largura de Canvas por largura do Alien (400 / 50 = 8)       
         let posAlien = (Math.floor(Math.random() * 8)) * 50;  
-        let alienNave = new alien(30, 0, 50, 50, posAlien, 0);
+        let alienNave = new alien(30, 0, 50, 50, posAlien, -50);
         alienNave.vy = 1;
 
         //Otimização do Alien --- Logica FUZZY/DIFUSA 
