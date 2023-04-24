@@ -86,6 +86,7 @@ function colide(){
 function updateBlock(){
     move();
     colide();
+    
 }
 
 function render(){
@@ -100,7 +101,8 @@ function render(){
 function update(){
     requestAnimationFrame(update, cnv);
     updateBlock();
-    render();    
+    render();  
+      
        
     
 }
