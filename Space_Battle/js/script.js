@@ -186,8 +186,21 @@
             }
             //GameOver -  confere se Alien ultrapassou nave Defender
             if(alienNave.y > cnv.height + alienNave.height - 50){
-            gameState = OVER;   
+                gameState = OVER;   
             console.log('FIM')        
+            }
+
+            //Verificar misseis para colisão com alien
+            for(let j in missiles){
+            let missil = missiles[j];
+                if(collide(missil, alienNave) && alienNave.state !== alienNave.EXPLODE){
+                    console.log('K.... BUUUUMM')
+                    destroy(alienNave);
+                    removeObjects(missil, missiles)
+                    removeObjects(missil, sprites)
+                    j--;
+                    i--;
+                }
             }
         }     
     }
@@ -223,6 +236,16 @@
         sprites.push(alienNave);
         aliens.push(alienNave);
         //console.log(posAlien);
+    }
+
+    //Destruir Aliens
+    function destroy(alienNave){
+        alienNave.state = alienNave.EXPLODE;
+        alienNave.explode(); 
+        setTimeout(function(){
+            removeObjects(alienNave, aliens);
+            removeObjects(alienNave, sprites);
+        }, 1000);
     }
 
     //Remover objeto de ARRAY
