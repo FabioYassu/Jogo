@@ -8,10 +8,13 @@
     //============= RECURSO DO JOGO ========================= 
     //ARRAYS
     let sprites = [];
-    //recursos a serem acrregados
     let assetsToLoad = [];
-    //Misseis
     let missiles = [];
+    let aliens = [];
+
+    //Variaveis uteis
+    let alienFrequency = 100;
+    let alienTimer = 0;
 
     //Sprites
     let background = new sprite(0, 56, 400, 500, 0, 0);
@@ -85,7 +88,7 @@
         }
     }, false);
 
-    //FUNÇÕES ==========================
+    //============= FUNÇÕES ==========================
     
     function loadHandler(){
         loadAssets++;
@@ -147,11 +150,39 @@
         for(let i in missiles){
             let missile = missiles[i];
             missile.y += missile.vy;
-            //Remove Misseis que não seram mais utilizados
+        //Remove Misseis que não seram mais utilizados
             if(missile.y < -missile.height){
                 removeObjects(missile, missiles);
                 removeObjects(missile, sprites);
                 i--;
+            }
+        }
+
+        //Encremento de Alien Timer
+        alienTimer++;
+
+        //Criação Alien, caso o timer iguale a frequência
+        if(alienTimer === alienFrequency){
+            makeAlien();
+            alienTimer = 0;
+        //Ajuste na frequencia de criação de aliens
+        if(alienFrequency > 2){
+            alienFrequency--;
+            }
+        }
+
+        //Move Aliens
+        for(let i in aliens){
+            let alienNave = aliens[i];
+            if(alienNave.state !== alienNave.EXPLODE){
+                alienNave.y += alienNave.vy;
+                if(alienNave.state === alienNave.CRAZY){
+                    if(alienNave.x > cnv.width - alienNave.width || alienNave.x < 0 ){
+                        alienNave.vx *= -1;
+                        
+                    }
+                    alienNave.x += alienNave.vx;
+                }
             }
         }
         
@@ -163,6 +194,31 @@
         missile.vy = -8;
         sprites.push(missile);
         missiles.push(missile);
+        
+    }
+
+    //Criação de Alien em tela
+    function makeAlien(){
+        //Cria um valor aleatorio entre 0 e 7
+        //Divide o canvas em 8 colunas para o posicionamento aleatorio do alien
+        // 8 = divisão de largura de Canvas por largura do Alien (400 / 50 = 8)       
+        let posAlien = (Math.floor(Math.random() * 8)) * 50;  
+        let alienNave = new alien(30, 0, 50, 50, posAlien, 0);
+        alienNave.vy = 1;
+
+        //Otimização do Alien --- Logica FUZZY/DIFUSA 
+        if(Math.floor(Math.random() * 11) > 7){
+            alienNave.state = alienNave.CRAZY;
+            alienNave.vx = 2;            
+        }
+
+        if(Math.floor(Math.random() * 11) > 5){
+            alienNave.vy = 2;
+        }
+
+        sprites.push(alienNave);
+        aliens.push(alienNave);
+        //console.log(posAlien);
     }
 
     //Remover objeto de ARRAY

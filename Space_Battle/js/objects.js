@@ -21,3 +21,20 @@ let sprite = function(sourceX,sourceY,width,height,x,y){
 	return this.height/2;
 }
 
+//Inimigo
+let alien = function(sourceX, sourceY, width, height, x, y) {
+    sprite.call(this, sourceX, sourceY, width, height, x, y);
+    this.NORMAL = 1;
+    this.EXPLODE = 2;
+    this.CRAZY = 3;
+    this.state = this.NORMAL;
+    this.moveStyle = this.NORMAL;
+}
+
+alien.prototype = Object.create(sprite.prototype);
+
+//Alien atingido - altera imagem do alien no SpriteSheet
+alien.prototype.explode = function() {
+    this.sourceX = 80;
+    this.width = this.height = 56;
+}
