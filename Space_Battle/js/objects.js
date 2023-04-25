@@ -38,3 +38,13 @@ alien.prototype.explode = function() {
     this.sourceX = 80;
     this.width = this.height = 56;
 }
+
+let ObjectMessage = function(y, text, color){
+    this.x = 0;
+    this.y = y;
+    this.text = text;
+    this.textVisible = true;
+    this.font = "normal bold 20px Helvetica";
+    this.color = color;
+    this.baseline = "top";
+}

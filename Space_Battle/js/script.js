@@ -11,6 +11,8 @@
     let assetsToLoad = [];
     let missiles = [];
     let aliens = [];
+    //ARRAY TEXT
+    let messages = [];
 
     //Variaveis uteis
     let alienFrequency = 100;
@@ -23,6 +25,15 @@
     //Nave Defender
     let defender = new sprite(0, 2, 30, 50, 185, 450);
     sprites.push(defender);
+
+    //Mensagem de Tela Inicial
+    let startMsgn = new ObjectMessage(cnv.height/2, "PRESS ENTER", "#f00");
+    messages.push(startMsgn)
+
+    //Mensagem PAUSE
+    let pauseMsgn = new ObjectMessage(cnv.width/2, "PAUSED", "#f00");
+    pauseMsgn.textVisible = false;
+    messages.push(pauseMsgn);
 
     //Imagens
     let img = new Image();
@@ -81,8 +92,12 @@
             case ENTER:
                 if(gameState !== PLAYING){
                     gameState = PLAYING;
+                    startMsgn.textVisible = false;
+                    pauseMsgn.textVisible = false;
                 } else {
                     gameState = PAUSED;
+                    pauseMsgn.textVisible = true; 
+                    
                 }
                 break;
         }
@@ -121,6 +136,20 @@
                 let spr = sprites[i];
                 //Parametros->(1° Imagem de referencia, 2° Captura de Imagen (largura, altura, posX, PosY), 3° Exibição/Print (posX, posY, largura e altura)  )
                 ctx.drawImage(img, spr.sourceX, spr.sourceY, spr.width, spr.height, Math.floor(spr.x), Math.floor(spr.y), spr.width, spr.height);
+            }
+        }
+        
+        //Exibir Textos
+        if(messages.length !== 0) {
+            for(let i in messages){
+                let message = messages[i];
+                if(message.textVisible){
+                    ctx.font = message.font;
+                    ctx.fillStyle = message.color;
+                    ctx.textBaseline = message.baseline;
+                    message.x = (cnv.width - ctx.measureText(message.text).width)/2;
+                    ctx.fillText(message.text, message.x, message.y)
+                } 
             }
         }
     }
