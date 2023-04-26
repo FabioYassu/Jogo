@@ -21,7 +21,8 @@
     let shots = 0;
     let hits = 0;
     let acuracy = 0;
-    let scoreWin = 70;
+    let scoreWin = 4;
+    let fire = 0, Explosion = 1;
 
     //Sprites
     let background = new sprite(0, 56, 400, 500, 0, 0);
@@ -116,9 +117,11 @@
                         gameState = PLAYING;
                         startMsgn.textVisible = false;
                         pauseMsgn.textVisible = false;
+                        console.log("Continue")
                     } else {
                         gameState = PAUSED;
-                        pauseMsgn.textVisible = true;                     
+                        pauseMsgn.textVisible = true;
+                        console.log("Pause")                     
                     }                 
                 } else {                
                     location.reload();                    
@@ -155,7 +158,21 @@
         render();
     }
 
-
+    //Efeitos sonoros
+    function playSound(soundType){
+        let sound = document.createElement('audio');        
+        if(soundType === Explosion){
+            sound.volume = 0.5;
+            sound.src = "sound/explosion.ogg" 
+        }else{
+            sound.volume = 0.2;
+            sound.src = "sound/fire.ogg"            
+        }
+        sound.addEventListener("canplaythrough", function(){
+            
+            sound.play();
+        },false )
+    }
 
     function render(){
         //console.log('Render OKAY')
@@ -269,8 +286,8 @@
                     if(parseInt(hits) === scoreWin) {
                         gameState = OVER;
                         //destroy aliens restantes
-                        for(let k in alienNave){
-                            let alienClear  = alienNave[k];
+                        for(let k in aliens){
+                            let alienClear  = aliens[k];
                             destroy(alienClear);
                         }
                     }
@@ -314,6 +331,7 @@
         } else {
             gameOverMsgn.text = "MISSION COMPLETED!"
             gameOverMsgn.color = "#00f";
+            resetMsgn.text = "Aperte ENTER para resetar";
         }
         gameOverMsgn.textVisible = true;
         resetMsgn.textVisible = true;               
@@ -325,6 +343,7 @@
         missile.vy = -8;
         sprites.push(missile);
         missiles.push(missile);
+        playSound(fire);
         shots++;
         
     }
@@ -350,13 +369,14 @@
 
         sprites.push(alienNave);
         aliens.push(alienNave);
-        //console.log(posAlien);
+        
     }
 
     //Destruir Aliens
     function destroy(alienNave){
         alienNave.state = alienNave.EXPLODE;
         alienNave.explode(); 
+        playSound(Explosion)
         setTimeout(function(){
             removeObjects(alienNave, aliens);
             removeObjects(alienNave, sprites);
