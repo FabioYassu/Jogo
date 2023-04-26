@@ -21,7 +21,7 @@
     let shots = 0;
     let hits = 0;
     let acuracy = 0;
-    let scoreWin = 4;
+    let scoreWin = 70;
     let fire = 0, Explosion = 1;
 
     //Sprites
@@ -242,7 +242,7 @@
             makeAlien();
             alienTimer = 0;
         //Ajuste na frequencia de criação de aliens
-        if(alienFrequency > 2){
+        if(alienFrequency > 4){
             alienFrequency--;
             }
         }
