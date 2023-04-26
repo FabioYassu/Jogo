@@ -392,5 +392,5 @@
     }
 
     loop();
-
+    console.log("Todos sons são artificiais criados para a tribulação")
 }());
