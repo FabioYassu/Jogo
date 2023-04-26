@@ -60,7 +60,7 @@
     //Imagens
     let img = new Image();
     img.addEventListener('load', loadHandler, false);
-    img.src = "img/space.png";
+    img.src = "img/space1.png";
     assetsToLoad.push(img);
 
     //contador de recursos
