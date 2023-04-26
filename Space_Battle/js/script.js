@@ -5,18 +5,23 @@
     let ctx = cnv.getContext("2d");
     //console.log(ctx)
 
-    //============= RECURSO DO JOGO ========================= 
+    //================= RECURSO DO JOGO ========================= 
     //ARRAYS
     let sprites = [];
     let assetsToLoad = [];
     let missiles = [];
     let aliens = [];
+
     //ARRAY TEXT
     let messages = [];
 
     //Variaveis uteis
     let alienFrequency = 100;
     let alienTimer = 0;
+    let shots = 0;
+    let hits = 0;
+    let acuracy = 0;
+    let scoreWin = 70;
 
     //Sprites
     let background = new sprite(0, 56, 400, 500, 0, 0);
@@ -34,6 +39,22 @@
     let pauseMsgn = new ObjectMessage(cnv.width/2, "PAUSED", "#f00");
     pauseMsgn.textVisible = false;
     messages.push(pauseMsgn);
+
+    //Mensagem Placar
+    let scoreMsgn = new ObjectMessage(10, "", "aliceblue");
+    scoreMsgn.font = "normal bold 15px Helvetica";
+    updateScore();
+    messages.push(scoreMsgn);
+
+    //Mensagem de GameOver
+    let gameOverMsgn = new ObjectMessage(cnv.height/2, "", "#f00");
+    gameOverMsgn.textVisible = false;
+    messages.push(gameOverMsgn); 
+
+    let resetMsgn = new ObjectMessage(cnv.height/2 + 25, "", "aliceblue");
+    resetMsgn.font = "normal bold 15px Helvetica"
+    resetMsgn.textVisible = false;
+    messages.push(resetMsgn); 
 
     //Imagens
     let img = new Image();
@@ -90,20 +111,23 @@
                 spaceDown = false;
                 break;
             case ENTER:
-                if(gameState !== PLAYING){
-                    gameState = PLAYING;
-                    startMsgn.textVisible = false;
-                    pauseMsgn.textVisible = false;
-                } else {
-                    gameState = PAUSED;
-                    pauseMsgn.textVisible = true; 
-                    
+                if(gameState !== OVER){
+                    if(gameState !== PLAYING){
+                        gameState = PLAYING;
+                        startMsgn.textVisible = false;
+                        pauseMsgn.textVisible = false;
+                    } else {
+                        gameState = PAUSED;
+                        pauseMsgn.textVisible = true;                     
+                    }                 
+                } else {                
+                    location.reload();                    
                 }
                 break;
         }
     }, false);
 
-    //============= FUNÇÕES ==========================
+    //================== FUNÇÕES ==========================
     
     function loadHandler(){
         loadAssets++;
@@ -124,9 +148,14 @@
             case PLAYING:
                 update();
                 break;
+            case OVER:                               
+                endGame();                
+                break;
         }
         render();
     }
+
+
 
     function render(){
         //console.log('Render OKAY')
@@ -183,6 +212,7 @@
             if(missile.y < -missile.height){
                 removeObjects(missile, missiles);
                 removeObjects(missile, sprites);
+                updateScore();
                 i--;
             }
         }
@@ -213,11 +243,19 @@
                     alienNave.x += alienNave.vx;
                 }
             }
-            //GameOver -  confere se Alien ultrapassou nave Defender
+            //GameOver - confere se Alien ultrapassou nave Defender
             if(alienNave.y > cnv.height + alienNave.height - 50){
                 gameState = OVER;   
             console.log('FIM')        
             }
+
+            //GameOver - confere colisão de alien com defender
+            if(collide(alienNave, defender)){
+                destroy(alienNave);
+                removeObjects(defender, sprites);
+                gameState = OVER;
+            }
+            
 
             //Verificar misseis para colisão com alien
             for(let j in missiles){
@@ -225,6 +263,17 @@
                 if(collide(missil, alienNave) && alienNave.state !== alienNave.EXPLODE){
                     console.log('K.... BUUUUMM')
                     destroy(alienNave);
+                    hits++;
+                    updateScore();   
+            //GameOver - Missão completa
+                    if(parseInt(hits) === scoreWin) {
+                        gameState = OVER;
+                        //destroy aliens restantes
+                        for(let k in alienNave){
+                            let alienClear  = alienNave[k];
+                            destroy(alienClear);
+                        }
+                    }
                     removeObjects(missil, missiles)
                     removeObjects(missil, sprites)
                     j--;
@@ -234,12 +283,49 @@
         }     
     }
 
+    //Atualiza Placar
+    function updateScore(){
+        if(shots === 0 ){
+            acuracy = 100;
+        }else{
+            acuracy = Math.floor(hits / shots * 100);
+        }
+        
+        if(acuracy < 100){
+            acuracy = acuracy.toString();
+            if(acuracy.length < 2){
+                acuracy = "    " + acuracy;
+            } else {
+                acuracy = "  " + acuracy;
+            }
+        }
+        hits = hits.toString();
+        if(hits.length < 2){
+            hits = " 0" + hits;
+        }
+        scoreMsgn.text = "HITS: " + hits + "        ACURACY: " + acuracy + "%";
+    }
+
+    //GAME OVER
+    function endGame(){
+        if(hits < scoreWin){
+            gameOverMsgn.text = "MISSION FAILED!";
+            resetMsgn.text = "Aperte ENTER para resetar";
+        } else {
+            gameOverMsgn.text = "MISSION COMPLETED!"
+            gameOverMsgn.color = "#00f";
+        }
+        gameOverMsgn.textVisible = true;
+        resetMsgn.textVisible = true;               
+    }
+
     //Criação misseis em tela
     function fireMissile(){
         let missile = new sprite(136, 12, 8, 13, defender.centerX() - 4, defender.centerY() - 13);
         missile.vy = -8;
         sprites.push(missile);
         missiles.push(missile);
+        shots++;
         
     }
 
