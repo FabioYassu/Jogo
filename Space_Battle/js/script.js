@@ -113,16 +113,13 @@
                 break;
             case ENTER:
                 if(gameState !== OVER){
-                    if(gameState !== PLAYING){
-                        gameState = PLAYING;
-                        startMsgn.textVisible = false;
-                        pauseMsgn.textVisible = false;
+                    gameState !== PLAYING ? ( 
+                        gameState = PLAYING, startMsgn.textVisible = false, pauseMsgn.textVisible = false,
                         console.log("Continue")
-                    } else {
-                        gameState = PAUSED;
-                        pauseMsgn.textVisible = true;
+                    ):(
+                        gameState = PAUSED, pauseMsgn.textVisible = true,
                         console.log("Pause")                     
-                    }                 
+                    )               
                 } else {                
                     location.reload();                    
                 }
@@ -161,15 +158,13 @@
     //Efeitos sonoros
     function playSound(soundType){
         let sound = document.createElement('audio');        
-        if(soundType === Explosion){
-            sound.volume = 0.5;
-            sound.src = "sound/explosion.ogg" 
-        }else{
-            sound.volume = 0.2;
-            sound.src = "sound/fire.ogg"            
-        }
-        sound.addEventListener("canplaythrough", function(){
-            
+        soundType === Explosion ? (
+            sound.volume = 0.5, sound.src = "sound/explosion.ogg" 
+            ):(
+            sound.volume = 0.2, sound.src = "sound/fire.ogg"
+            );          
+        
+            sound.addEventListener("canplaythrough", function(){
             sound.play();
         },false )
     }
@@ -188,7 +183,7 @@
         //Exibir Textos
         if(messages.length !== 0) {
             for(let i in messages){
-                let message = messages[i];
+                const message = messages[i];
                 if(message.textVisible){
                     ctx.font = message.font;
                     ctx.fillStyle = message.color;
@@ -249,7 +244,7 @@
 
         //Move Aliens
         for(let i in aliens){
-            let alienNave = aliens[i];
+            const alienNave = aliens[i];
             if(alienNave.state !== alienNave.EXPLODE){
                 alienNave.y += alienNave.vy;
                 if(alienNave.state === alienNave.CRAZY){
@@ -302,19 +297,11 @@
 
     //Atualiza Placar
     function updateScore(){
-        if(shots === 0 ){
-            acuracy = 100;
-        }else{
-            acuracy = Math.floor(hits / shots * 100);
-        }
+        shots === 0 ? acuracy = 100 : acuracy = Math.floor(hits / shots * 100);
         
         if(acuracy < 100){
             acuracy = acuracy.toString();
-            if(acuracy.length < 2){
-                acuracy = "    " + acuracy;
-            } else {
-                acuracy = "  " + acuracy;
-            }
+            acuracy.length < 2 ? acuracy = "    " + acuracy : acuracy = "  " + acuracy
         }
         hits = hits.toString();
         if(hits.length < 2){
@@ -325,14 +312,12 @@
 
     //GAME OVER
     function endGame(){
-        if(hits < scoreWin){
-            gameOverMsgn.text = "MISSION FAILED!";
-            resetMsgn.text = "Aperte ENTER para resetar";
-        } else {
-            gameOverMsgn.text = "MISSION COMPLETED!"
-            gameOverMsgn.color = "#00f";
-            resetMsgn.text = "Aperte ENTER para resetar";
-        }
+        hits < scoreWin ? (
+            gameOverMsgn.text = "MISSION FAILED!", resetMsgn.text = "Aperte ENTER para resetar"
+            ):(
+            gameOverMsgn.text = "MISSION COMPLETED!", gameOverMsgn.color = "#00f", resetMsgn.text = "Aperte ENTER para resetar"
+            )
+        
         gameOverMsgn.textVisible = true;
         resetMsgn.textVisible = true;               
     }

@@ -17,7 +17,7 @@
 
 
     //Objetos 
-    let character = new sprite(50, 175, 50, 50, "#00f");
+    let character = new sprite(50, 175, 20, 20, "#00f");
     character.speed = 4;
     sprites.push(character);
 
